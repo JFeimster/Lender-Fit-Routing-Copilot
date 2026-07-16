@@ -1,0 +1,10 @@
+{
+  "name": "lender-fit-routing-copilot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Static-first site, GPT Actions, and Knowledge pack for transparent funding-product routing.",
+  "scripts": {
+    "scaffold:preview": "powershell -ExecutionPolicy Bypass -File scripts/scaffold-lender-fit-routing-copilot.ps1 -DryRun",
+    "scaffold:validate": "powershell -ExecutionPolicy Bypass -File scripts/scaffold-lender-fit-routing-copilot.ps1 -ValidateOnly"
+  }
+}

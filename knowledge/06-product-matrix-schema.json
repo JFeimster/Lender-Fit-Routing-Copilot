@@ -1,0 +1,708 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/lender-fit-routing-copilot/product-matrix.schema.json",
+  "name": "lender_fit_routing_copilot_product_matrix_schema",
+  "title": "Lender Fit Routing Copilot Product Matrix Schema",
+  "version": "1.1",
+  "status": "production_reference",
+  "last_updated": "2026-07-16",
+  "purpose": "Validate the populated 59-row funding-product matrix while preserving the existing compact field contract.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata",
+    "products"
+  ],
+  "$defs": {
+    "product_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "product_id",
+        "product_name",
+        "product_type",
+        "active_status",
+        "matrix_version",
+        "record_status"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "record_status": {
+                "const": "current"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "criteria_last_verified",
+              "criteria_source",
+              "product_owner"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "record_status": {
+                "const": "inactive"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "active_status": {
+                "const": false
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "product_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{2,63}$"
+        },
+        "product_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "product_type": {
+          "type": "string",
+          "enum": [
+            "business_line_of_credit",
+            "term_loan",
+            "equipment_financing",
+            "invoice_financing",
+            "factoring",
+            "revenue_based_financing",
+            "short_term_working_capital",
+            "sba_related_financing",
+            "bank_financing",
+            "commercial_real_estate_financing",
+            "purchase_order_financing",
+            "inventory_financing",
+            "business_credit_card_or_revolving_credit",
+            "other",
+            "unknown"
+          ]
+        },
+        "provider_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 300
+        },
+        "active_status": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "minimum_time_in_business_months": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "minimum_monthly_revenue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "minimum_annual_revenue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "minimum_funding_amount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "maximum_funding_amount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "eligible_states": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "restricted_states": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "eligible_industries": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "restricted_industries": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "preferred_credit_range": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "720_plus",
+              "680_719",
+              "640_679",
+              "600_639",
+              "550_599",
+              "below_550",
+              "unknown",
+              "not_provided"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "minimum_credit_guidance": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 300,
+          "maximum": 850
+        },
+        "maximum_existing_positions": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "negative_day_tolerance": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "review_period_days": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1
+            },
+            "maximum_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "rule_status": {
+              "type": "string",
+              "enum": [
+                "hard",
+                "preference",
+                "review",
+                "unknown"
+              ]
+            }
+          },
+          "required": [
+            "rule_status"
+          ]
+        },
+        "nsf_tolerance": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "review_period_days": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1
+            },
+            "maximum_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "rule_status": {
+              "type": "string",
+              "enum": [
+                "hard",
+                "preference",
+                "review",
+                "unknown"
+              ]
+            }
+          },
+          "required": [
+            "rule_status"
+          ]
+        },
+        "average_balance_guidance": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "minimum_amount": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "rule_status": {
+              "type": "string",
+              "enum": [
+                "hard",
+                "preference",
+                "review",
+                "unknown"
+              ]
+            },
+            "notes": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 1000
+            }
+          },
+          "required": [
+            "rule_status"
+          ]
+        },
+        "required_collateral": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "none",
+              "equipment",
+              "real_estate",
+              "accounts_receivable",
+              "inventory",
+              "other",
+              "unknown"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "personal_guarantee_requirement": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "required",
+            "not_required",
+            "conditional",
+            "unknown",
+            null
+          ]
+        },
+        "payment_frequency": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "weekly",
+              "biweekly",
+              "monthly",
+              "variable",
+              "unknown"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "typical_term_min_months": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "typical_term_max_months": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "typical_process_time": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "minimum_business_days": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "maximum_business_days": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 500
+            },
+            "verified": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "verified"
+          ]
+        },
+        "required_documents": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "application",
+              "government_id",
+              "voided_check",
+              "bank_statements",
+              "business_bank_link",
+              "business_tax_returns",
+              "personal_tax_returns",
+              "profit_and_loss",
+              "balance_sheet",
+              "debt_schedule",
+              "accounts_receivable_aging",
+              "accounts_payable_aging",
+              "invoices",
+              "equipment_quote",
+              "purchase_order",
+              "business_formation_documents",
+              "ownership_documents",
+              "lease",
+              "real_estate_documents",
+              "other"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "supported_uses_of_funds": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "working_capital",
+              "inventory",
+              "equipment",
+              "payroll",
+              "expansion",
+              "marketing",
+              "receivables_gap",
+              "tax_obligation",
+              "debt_refinance",
+              "acquisition",
+              "real_estate",
+              "emergency_repair",
+              "other"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "prohibited_uses_of_funds": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "working_capital",
+              "inventory",
+              "equipment",
+              "payroll",
+              "expansion",
+              "marketing",
+              "receivables_gap",
+              "tax_obligation",
+              "debt_refinance",
+              "acquisition",
+              "real_estate",
+              "emergency_repair",
+              "other"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "best_fit_profile": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2500
+        },
+        "common_decline_reasons": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "exception_policy": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2500
+        },
+        "criteria_last_verified": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "criteria_source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Approved source reference; never include credentials."
+        },
+        "product_owner": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200
+        },
+        "matrix_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "record_status": {
+          "type": "string",
+          "enum": [
+            "current",
+            "review_soon",
+            "stale",
+            "unverified",
+            "inactive"
+          ]
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 5000
+        }
+      }
+    }
+  },
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "matrix_id",
+        "matrix_name",
+        "matrix_version",
+        "owner",
+        "created_date",
+        "last_updated",
+        "review_cadence",
+        "source_status",
+        "operational_data_status",
+        "product_count",
+        "active_product_count",
+        "stale_product_count",
+        "unverified_product_count",
+        "csv_list_delimiter"
+      ],
+      "properties": {
+        "matrix_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{2,63}$"
+        },
+        "matrix_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "matrix_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "created_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date"
+        },
+        "review_cadence": {
+          "type": "string",
+          "enum": [
+            "event_driven",
+            "weekly",
+            "monthly",
+            "quarterly",
+            "custom"
+          ]
+        },
+        "review_cadence_notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        },
+        "source_status": {
+          "type": "string",
+          "enum": [
+            "verified",
+            "partially_verified",
+            "template_requires_data"
+          ]
+        },
+        "operational_data_status": {
+          "type": "string",
+          "enum": [
+            "current",
+            "requires_verification",
+            "not_included"
+          ]
+        },
+        "product_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "active_product_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stale_product_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unverified_product_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "csv_list_delimiter": {
+          "type": "string",
+          "const": "|",
+          "description": "CSV array fields use a pipe delimiter; JSON records use arrays."
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "default": "USD"
+        },
+        "archive_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Approved internal reference to the prior immutable matrix."
+        },
+        "change_summary": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2500
+        }
+      }
+    },
+    "products": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/product_record"
+      },
+      "uniqueItems": true
+    }
+  }
+}

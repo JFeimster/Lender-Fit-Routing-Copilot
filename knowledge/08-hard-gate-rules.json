@@ -1,0 +1,718 @@
+{
+  "name": "lender_fit_routing_copilot_hard_gate_rules",
+  "title": "Lender Fit Routing Copilot Generic Hard-Gate Rules",
+  "version": "1.1",
+  "status": "production_reference",
+  "last_updated": "2026-07-16",
+  "purpose": "Apply generic mandatory routing checks before weighted scoring without inventing provider-specific requirements.",
+  "source_status": {
+    "methodology_status": "approved",
+    "operational_data_status": "current_snapshot_mixed_verification",
+    "human_review_required": true
+  },
+  "policy": {
+    "evaluation_order": "ascending_priority",
+    "stop_final_ranking_on_any_fail": true,
+    "allow_conditional_scoring_on_review": true,
+    "stop_final_ranking_on_missing_critical_data": true,
+    "unknown_product_rule_means_unrestricted": false,
+    "score_can_override_hard_gate": false,
+    "required_disclosure": "This analysis is an internal routing aid based on the information and product criteria provided. It is not an approval, offer, guarantee, or underwriting decision. Eligibility, terms, costs, and availability may change and require current lender review.",
+    "family_routing_rule": "Family-routing thresholds from funding-routing-rules.registry.json are preliminary route signals, not provider hard gates. Product-row criteria remain controlling."
+  },
+  "result_catalog": [
+    {
+      "result": "pass",
+      "meaning": "The declared mandatory rule is satisfied."
+    },
+    {
+      "result": "fail",
+      "meaning": "The product fails a mandatory declared rule and is excluded from normal ranking."
+    },
+    {
+      "result": "review",
+      "meaning": "The rule is ambiguous, conditional, stale, or requires authorized human interpretation."
+    },
+    {
+      "result": "missing_data",
+      "meaning": "Required borrower or product data is unavailable; final ranking must stop."
+    }
+  ],
+  "operator_catalog": [
+    {
+      "operator": "equals",
+      "description": "Borrower or product value equals the required value."
+    },
+    {
+      "operator": "not_equals",
+      "description": "Borrower or product value does not equal the prohibited value."
+    },
+    {
+      "operator": "greater_than_or_equal",
+      "description": "Borrower numeric value meets or exceeds the product minimum."
+    },
+    {
+      "operator": "less_than_or_equal",
+      "description": "Borrower numeric value is at or below the product maximum."
+    },
+    {
+      "operator": "between",
+      "description": "Borrower numeric value falls between declared minimum and maximum values."
+    },
+    {
+      "operator": "in_list",
+      "description": "Borrower scalar value appears in the product list."
+    },
+    {
+      "operator": "not_in_list",
+      "description": "Borrower scalar value does not appear in the restricted product list."
+    },
+    {
+      "operator": "contains_any",
+      "description": "Borrower array shares at least one value with the product array."
+    },
+    {
+      "operator": "contains_all",
+      "description": "Borrower array contains every required product value."
+    },
+    {
+      "operator": "is_present",
+      "description": "Required field is not null, blank, or missing."
+    },
+    {
+      "operator": "is_current",
+      "description": "Criteria verification date satisfies the configured freshness policy."
+    },
+    {
+      "operator": "conflicts_with",
+      "description": "One value materially conflicts with another declared source or field."
+    }
+  ],
+  "rules": [
+    {
+      "rule_id": "HG-001",
+      "name": "Product Active Status",
+      "priority": 10,
+      "enabled": true,
+      "rule_type": "hard",
+      "borrower_field": null,
+      "product_field": "active_status",
+      "operator": "equals",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "pass",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Product Active Status passed.",
+        "fail": "Product Active Status failed. Expose the borrower value, product requirement, and source.",
+        "review": "Product Active Status requires human review.",
+        "missing_data": "Product Active Status cannot be evaluated because required data is missing."
+      },
+      "notes": "Product value must be true. Inactive products are excluded."
+    },
+    {
+      "rule_id": "HG-002",
+      "name": "Criteria Freshness",
+      "priority": 20,
+      "enabled": true,
+      "rule_type": "hard",
+      "borrower_field": "metadata.data_last_verified",
+      "product_field": "criteria_last_verified",
+      "operator": "is_current",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "pass",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Criteria Freshness passed.",
+        "fail": "Criteria Freshness failed. Expose the borrower value, product requirement, and source.",
+        "review": "Criteria Freshness requires human review.",
+        "missing_data": "Criteria Freshness cannot be evaluated because required data is missing."
+      },
+      "notes": "Current: 0-30 days; Review Soon: 31-90; Stale: >90; no date: Unverified."
+    },
+    {
+      "rule_id": "HG-003",
+      "name": "Borrower State Present",
+      "priority": 30,
+      "enabled": true,
+      "rule_type": "data_quality",
+      "borrower_field": "business_profile.state",
+      "product_field": null,
+      "operator": "is_present",
+      "when_product_field_missing": "pass",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Borrower State Present passed.",
+        "fail": "Borrower State Present failed. Expose the borrower value, product requirement, and source.",
+        "review": "Borrower State Present requires human review.",
+        "missing_data": "Borrower State Present cannot be evaluated because required data is missing."
+      },
+      "notes": ""
+    },
+    {
+      "rule_id": "HG-004",
+      "name": "Borrower Industry Present",
+      "priority": 40,
+      "enabled": true,
+      "rule_type": "data_quality",
+      "borrower_field": "business_profile.industry",
+      "product_field": null,
+      "operator": "is_present",
+      "when_product_field_missing": "pass",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Borrower Industry Present passed.",
+        "fail": "Borrower Industry Present failed. Expose the borrower value, product requirement, and source.",
+        "review": "Borrower Industry Present requires human review.",
+        "missing_data": "Borrower Industry Present cannot be evaluated because required data is missing."
+      },
+      "notes": ""
+    },
+    {
+      "rule_id": "HG-005",
+      "name": "Time in Business Present",
+      "priority": 50,
+      "enabled": true,
+      "rule_type": "data_quality",
+      "borrower_field": "business_profile.time_in_business_months",
+      "product_field": null,
+      "operator": "is_present",
+      "when_product_field_missing": "pass",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Time in Business Present passed.",
+        "fail": "Time in Business Present failed. Expose the borrower value, product requirement, and source.",
+        "review": "Time in Business Present requires human review.",
+        "missing_data": "Time in Business Present cannot be evaluated because required data is missing."
+      },
+      "notes": ""
+    },
+    {
+      "rule_id": "HG-006",
+      "name": "Monthly Revenue Present",
+      "priority": 60,
+      "enabled": true,
+      "rule_type": "data_quality",
+      "borrower_field": "financial_profile.average_monthly_revenue",
+      "product_field": null,
+      "operator": "is_present",
+      "when_product_field_missing": "pass",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Monthly Revenue Present passed.",
+        "fail": "Monthly Revenue Present failed. Expose the borrower value, product requirement, and source.",
+        "review": "Monthly Revenue Present requires human review.",
+        "missing_data": "Monthly Revenue Present cannot be evaluated because required data is missing."
+      },
+      "notes": ""
+    },
+    {
+      "rule_id": "HG-007",
+      "name": "Requested Amount Present",
+      "priority": 70,
+      "enabled": true,
+      "rule_type": "data_quality",
+      "borrower_field": "funding_request.requested_amount",
+      "product_field": null,
+      "operator": "is_present",
+      "when_product_field_missing": "pass",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Requested Amount Present passed.",
+        "fail": "Requested Amount Present failed. Expose the borrower value, product requirement, and source.",
+        "review": "Requested Amount Present requires human review.",
+        "missing_data": "Requested Amount Present cannot be evaluated because required data is missing."
+      },
+      "notes": ""
+    },
+    {
+      "rule_id": "HG-008",
+      "name": "Use of Funds Present",
+      "priority": 80,
+      "enabled": true,
+      "rule_type": "data_quality",
+      "borrower_field": "funding_request.use_of_funds",
+      "product_field": null,
+      "operator": "is_present",
+      "when_product_field_missing": "pass",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Use of Funds Present passed.",
+        "fail": "Use of Funds Present failed. Expose the borrower value, product requirement, and source.",
+        "review": "Use of Funds Present requires human review.",
+        "missing_data": "Use of Funds Present cannot be evaluated because required data is missing."
+      },
+      "notes": ""
+    },
+    {
+      "rule_id": "HG-009",
+      "name": "State Eligibility",
+      "priority": 100,
+      "enabled": true,
+      "rule_type": "hard",
+      "borrower_field": "business_profile.state",
+      "product_field": "eligible_states",
+      "operator": "in_list",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "State Eligibility passed.",
+        "fail": "State Eligibility failed. Expose the borrower value, product requirement, and source.",
+        "review": "State Eligibility requires human review.",
+        "missing_data": "State Eligibility cannot be evaluated because required data is missing."
+      },
+      "notes": "An empty or unknown eligible-state list does not mean nationwide eligibility."
+    },
+    {
+      "rule_id": "HG-010",
+      "name": "Restricted State",
+      "priority": 110,
+      "enabled": true,
+      "rule_type": "hard",
+      "borrower_field": "business_profile.state",
+      "product_field": "restricted_states",
+      "operator": "not_in_list",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Restricted State passed.",
+        "fail": "Restricted State failed. Expose the borrower value, product requirement, and source.",
+        "review": "Restricted State requires human review.",
+        "missing_data": "Restricted State cannot be evaluated because required data is missing."
+      },
+      "notes": ""
+    },
+    {
+      "rule_id": "HG-011",
+      "name": "Industry Eligibility",
+      "priority": 120,
+      "enabled": true,
+      "rule_type": "hard",
+      "borrower_field": "business_profile.industry",
+      "product_field": "eligible_industries",
+      "operator": "in_list",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Industry Eligibility passed.",
+        "fail": "Industry Eligibility failed. Expose the borrower value, product requirement, and source.",
+        "review": "Industry Eligibility requires human review.",
+        "missing_data": "Industry Eligibility cannot be evaluated because required data is missing."
+      },
+      "notes": ""
+    },
+    {
+      "rule_id": "HG-012",
+      "name": "Restricted Industry",
+      "priority": 130,
+      "enabled": true,
+      "rule_type": "hard",
+      "borrower_field": "business_profile.industry",
+      "product_field": "restricted_industries",
+      "operator": "not_in_list",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Restricted Industry passed.",
+        "fail": "Restricted Industry failed. Expose the borrower value, product requirement, and source.",
+        "review": "Restricted Industry requires human review.",
+        "missing_data": "Restricted Industry cannot be evaluated because required data is missing."
+      },
+      "notes": ""
+    },
+    {
+      "rule_id": "HG-013",
+      "name": "Minimum Time in Business",
+      "priority": 140,
+      "enabled": true,
+      "rule_type": "hard",
+      "borrower_field": "business_profile.time_in_business_months",
+      "product_field": "minimum_time_in_business_months",
+      "operator": "greater_than_or_equal",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Minimum Time in Business passed.",
+        "fail": "Minimum Time in Business failed. Expose the borrower value, product requirement, and source.",
+        "review": "Minimum Time in Business requires human review.",
+        "missing_data": "Minimum Time in Business cannot be evaluated because required data is missing."
+      },
+      "notes": ""
+    },
+    {
+      "rule_id": "HG-014",
+      "name": "Minimum Monthly Revenue",
+      "priority": 150,
+      "enabled": true,
+      "rule_type": "hard",
+      "borrower_field": "financial_profile.average_monthly_revenue",
+      "product_field": "minimum_monthly_revenue",
+      "operator": "greater_than_or_equal",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Minimum Monthly Revenue passed.",
+        "fail": "Minimum Monthly Revenue failed. Expose the borrower value, product requirement, and source.",
+        "review": "Minimum Monthly Revenue requires human review.",
+        "missing_data": "Minimum Monthly Revenue cannot be evaluated because required data is missing."
+      },
+      "notes": ""
+    },
+    {
+      "rule_id": "HG-015",
+      "name": "Minimum Annual Revenue",
+      "priority": 160,
+      "enabled": true,
+      "rule_type": "hard",
+      "borrower_field": "financial_profile.annual_revenue",
+      "product_field": "minimum_annual_revenue",
+      "operator": "greater_than_or_equal",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "review",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Minimum Annual Revenue passed.",
+        "fail": "Minimum Annual Revenue failed. Expose the borrower value, product requirement, and source.",
+        "review": "Minimum Annual Revenue requires human review.",
+        "missing_data": "Minimum Annual Revenue cannot be evaluated because required data is missing."
+      },
+      "notes": "Evaluate only when the product declares an annual-revenue rule."
+    },
+    {
+      "rule_id": "HG-016",
+      "name": "Minimum Funding Amount",
+      "priority": 170,
+      "enabled": true,
+      "rule_type": "hard",
+      "borrower_field": "funding_request.requested_amount",
+      "product_field": "minimum_funding_amount",
+      "operator": "greater_than_or_equal",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Minimum Funding Amount passed.",
+        "fail": "Minimum Funding Amount failed. Expose the borrower value, product requirement, and source.",
+        "review": "Minimum Funding Amount requires human review.",
+        "missing_data": "Minimum Funding Amount cannot be evaluated because required data is missing."
+      },
+      "notes": ""
+    },
+    {
+      "rule_id": "HG-017",
+      "name": "Maximum Funding Amount",
+      "priority": 180,
+      "enabled": true,
+      "rule_type": "hard",
+      "borrower_field": "funding_request.requested_amount",
+      "product_field": "maximum_funding_amount",
+      "operator": "less_than_or_equal",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Maximum Funding Amount passed.",
+        "fail": "Maximum Funding Amount failed. Expose the borrower value, product requirement, and source.",
+        "review": "Maximum Funding Amount requires human review.",
+        "missing_data": "Maximum Funding Amount cannot be evaluated because required data is missing."
+      },
+      "notes": ""
+    },
+    {
+      "rule_id": "HG-018",
+      "name": "Existing Position Limit",
+      "priority": 190,
+      "enabled": true,
+      "rule_type": "conditional_hard",
+      "borrower_field": "financial_profile.existing_funding_positions",
+      "product_field": "maximum_existing_positions",
+      "operator": "less_than_or_equal",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Existing Position Limit passed.",
+        "fail": "Existing Position Limit failed. Expose the borrower value, product requirement, and source.",
+        "review": "Existing Position Limit requires human review.",
+        "missing_data": "Existing Position Limit cannot be evaluated because required data is missing."
+      },
+      "notes": ""
+    },
+    {
+      "rule_id": "HG-019",
+      "name": "Required Collateral Compatibility",
+      "priority": 200,
+      "enabled": true,
+      "rule_type": "conditional_hard",
+      "borrower_field": "funding_request.collateral_available",
+      "product_field": "required_collateral",
+      "operator": "contains_any",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Required Collateral Compatibility passed.",
+        "fail": "Required Collateral Compatibility failed. Expose the borrower value, product requirement, and source.",
+        "review": "Required Collateral Compatibility requires human review.",
+        "missing_data": "Required Collateral Compatibility cannot be evaluated because required data is missing."
+      },
+      "notes": "If the product explicitly requires none, evaluate that declaration rather than forcing collateral."
+    },
+    {
+      "rule_id": "HG-020",
+      "name": "Personal Guarantee Compatibility",
+      "priority": 210,
+      "enabled": true,
+      "rule_type": "conditional_hard",
+      "borrower_field": "owner_profile.personal_guarantee_willingness",
+      "product_field": "personal_guarantee_requirement",
+      "operator": "equals",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "review",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Personal Guarantee Compatibility passed.",
+        "fail": "Personal Guarantee Compatibility failed. Expose the borrower value, product requirement, and source.",
+        "review": "Personal Guarantee Compatibility requires human review.",
+        "missing_data": "Personal Guarantee Compatibility cannot be evaluated because required data is missing."
+      },
+      "notes": "Conditional requirements must route to human review."
+    },
+    {
+      "rule_id": "HG-021",
+      "name": "Supported Use of Funds",
+      "priority": 220,
+      "enabled": true,
+      "rule_type": "hard",
+      "borrower_field": "funding_request.use_of_funds",
+      "product_field": "supported_uses_of_funds",
+      "operator": "contains_any",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Supported Use of Funds passed.",
+        "fail": "Supported Use of Funds failed. Expose the borrower value, product requirement, and source.",
+        "review": "Supported Use of Funds requires human review.",
+        "missing_data": "Supported Use of Funds cannot be evaluated because required data is missing."
+      },
+      "notes": ""
+    },
+    {
+      "rule_id": "HG-022",
+      "name": "Prohibited Use of Funds",
+      "priority": 230,
+      "enabled": true,
+      "rule_type": "hard",
+      "borrower_field": "funding_request.use_of_funds",
+      "product_field": "prohibited_uses_of_funds",
+      "operator": "not_in_list",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Prohibited Use of Funds passed.",
+        "fail": "Prohibited Use of Funds failed. Expose the borrower value, product requirement, and source.",
+        "review": "Prohibited Use of Funds requires human review.",
+        "missing_data": "Prohibited Use of Funds cannot be evaluated because required data is missing."
+      },
+      "notes": "Implement array intersection logic so any prohibited use can fail the gate."
+    },
+    {
+      "rule_id": "HG-023",
+      "name": "Required Document Availability",
+      "priority": 240,
+      "enabled": true,
+      "rule_type": "conditional_hard",
+      "borrower_field": "document_readiness.available_documents",
+      "product_field": "required_documents",
+      "operator": "contains_all",
+      "when_product_field_missing": "review",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "request_documents_or_exclude",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Required Document Availability passed.",
+        "fail": "Required Document Availability failed. Expose the borrower value, product requirement, and source.",
+        "review": "Required Document Availability requires human review.",
+        "missing_data": "Required Document Availability cannot be evaluated because required data is missing."
+      },
+      "notes": "A document gap may be fixable; expose missing document categories."
+    },
+    {
+      "rule_id": "HG-024",
+      "name": "Ownership or Entity Requirement",
+      "priority": 250,
+      "enabled": true,
+      "rule_type": "conditional_hard",
+      "borrower_field": "business_profile.entity_type",
+      "product_field": null,
+      "operator": "is_present",
+      "when_product_field_missing": "pass",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "exclude_product",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Ownership or Entity Requirement passed.",
+        "fail": "Ownership or Entity Requirement failed. Expose the borrower value, product requirement, and source.",
+        "review": "Ownership or Entity Requirement requires human review.",
+        "missing_data": "Ownership or Entity Requirement cannot be evaluated because required data is missing."
+      },
+      "notes": "Provider-specific entity rules may be added only when verified in a future rule set."
+    },
+    {
+      "rule_id": "HG-025",
+      "name": "Conflicting Critical Borrower Data",
+      "priority": 260,
+      "enabled": true,
+      "rule_type": "data_quality",
+      "borrower_field": "data_quality.conflicting_fields",
+      "product_field": null,
+      "operator": "conflicts_with",
+      "when_product_field_missing": "pass",
+      "when_borrower_field_missing": "missing_data",
+      "pass_result": "pass",
+      "failure_result": "fail",
+      "review_result": "review",
+      "missing_data_result": "missing_data",
+      "failure_action": "stop_final_ranking",
+      "exception_action": "create_exception_review",
+      "messages": {
+        "pass": "Conflicting Critical Borrower Data passed.",
+        "fail": "Conflicting Critical Borrower Data failed. Expose the borrower value, product requirement, and source.",
+        "review": "Conflicting Critical Borrower Data requires human review.",
+        "missing_data": "Conflicting Critical Borrower Data cannot be evaluated because required data is missing."
+      },
+      "notes": "Any material conflict routes to missing-data or exception review; do not select the favorable value."
+    }
+  ]
+}

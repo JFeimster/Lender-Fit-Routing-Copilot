@@ -1,0 +1,987 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/lender-fit-routing-copilot/borrower-intake.schema.json",
+  "name": "lender_fit_routing_copilot_borrower_intake_schema",
+  "title": "Lender Fit Routing Copilot Borrower Intake Schema",
+  "version": "1.1",
+  "status": "production_reference",
+  "last_updated": "2026-07-16",
+  "purpose": "Validate the canonical redacted borrower profile and normalize current funding lead fields without copying source CRM records into GPT Knowledge.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata",
+    "business_profile",
+    "financial_profile",
+    "owner_profile",
+    "funding_request",
+    "document_readiness",
+    "data_quality",
+    "consent_and_authorization",
+    "risk_flags",
+    "notes"
+  ],
+  "$defs": {
+    "field_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field_name",
+        "source_type",
+        "verification_status"
+      ],
+      "properties": {
+        "field_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_type": {
+          "type": "string",
+          "enum": [
+            "user_provided",
+            "document_verified",
+            "bank_link_verified",
+            "crm_imported",
+            "api_retrieved",
+            "calculated",
+            "estimated",
+            "unknown"
+          ]
+        },
+        "verification_status": {
+          "type": "string",
+          "enum": [
+            "verified",
+            "borrower_reported",
+            "estimated",
+            "conflicting",
+            "stale",
+            "unverified",
+            "not_applicable"
+          ]
+        },
+        "verified_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "source_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Redacted internal reference, not a credential or restricted identifier."
+        },
+        "review_notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        }
+      }
+    },
+    "risk_flag": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "category",
+        "severity",
+        "description",
+        "human_review_required"
+      ],
+      "properties": {
+        "category": {
+          "type": "string",
+          "enum": [
+            "missing_critical_data",
+            "conflicting_data",
+            "stale_data",
+            "negative_bank_activity",
+            "high_existing_obligations",
+            "multiple_existing_positions",
+            "seasonal_revenue",
+            "customer_concentration",
+            "restricted_industry_possible",
+            "state_eligibility_unclear",
+            "unsupported_use_of_funds_possible",
+            "document_gap",
+            "payment_pressure",
+            "identity_or_ownership_review",
+            "other"
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "source_type": {
+          "type": "string",
+          "enum": [
+            "user_provided",
+            "document_verified",
+            "bank_link_verified",
+            "crm_imported",
+            "api_retrieved",
+            "calculated",
+            "estimated",
+            "unknown"
+          ]
+        },
+        "human_review_required": {
+          "type": "boolean"
+        },
+        "resolved": {
+          "type": "boolean"
+        },
+        "resolution_notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        }
+      }
+    }
+  },
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "borrower_id",
+        "intake_date",
+        "data_last_verified",
+        "intake_owner",
+        "redaction_confirmed",
+        "schema_version"
+      ],
+      "properties": {
+        "borrower_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{2,63}$",
+          "description": "Redacted internal identifier; do not use SSN, EIN, account number, or a full personal identifier."
+        },
+        "analysis_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{2,63}$"
+        },
+        "intake_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "data_last_verified": {
+          "type": "string",
+          "format": "date"
+        },
+        "intake_owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "source_system": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200
+        },
+        "source_record_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Redacted source-system ID."
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "default": "USD"
+        },
+        "redaction_confirmed": {
+          "type": "boolean",
+          "const": true
+        },
+        "profile_status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "ready_for_validation",
+            "validated",
+            "archived"
+          ]
+        }
+      }
+    },
+    "business_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "industry",
+        "time_in_business_months"
+      ],
+      "properties": {
+        "legal_business_name_redacted": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200
+        },
+        "dba_name_redacted": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200
+        },
+        "entity_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "llc",
+            "corporation",
+            "sole_proprietor",
+            "partnership",
+            "nonprofit",
+            "other",
+            "unknown",
+            null
+          ]
+        },
+        "state": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$"
+        },
+        "industry": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150
+        },
+        "naics_code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9]{2,6}$"
+        },
+        "time_in_business_months": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1200
+        },
+        "business_start_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "employee_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "business_location_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "commercial",
+            "home_based",
+            "mobile",
+            "online",
+            "multiple_locations",
+            "other",
+            "unknown",
+            null
+          ]
+        },
+        "website_present": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "ownership_structure_summary": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        },
+        "business_persona": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "existing_small_business_owner",
+            "gig_worker_independent_contractor",
+            "ecommerce_marketplace_seller",
+            "startup_founder",
+            "real_estate_investor",
+            "contractor_trucking_equipment_heavy",
+            "not_sure",
+            null
+          ],
+          "description": "Operational profile used for family-level routing."
+        }
+      }
+    },
+    "financial_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "average_monthly_revenue"
+      ],
+      "properties": {
+        "average_monthly_revenue": {
+          "type": "number",
+          "minimum": 0
+        },
+        "revenue_review_period_months": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 36
+        },
+        "annual_revenue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "average_monthly_deposit_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "average_bank_balance": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "negative_days_review_period": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 365
+        },
+        "negative_days_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 365
+        },
+        "nsf_review_period": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 365
+        },
+        "nsf_or_returned_item_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "existing_monthly_debt_payments": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "existing_funding_positions": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "estimated_free_cash_flow": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "accounts_receivable": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "accounts_payable": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "gross_margin_percent": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": -100,
+          "maximum": 100
+        },
+        "revenue_seasonality": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "none_known",
+            "low",
+            "moderate",
+            "high",
+            "unknown",
+            null
+          ]
+        },
+        "customer_concentration_percent": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "lowest_monthly_revenue_90_days": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Lowest posted monthly revenue during the most recent 90-day review window."
+        },
+        "bank_account_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "business",
+            "personal",
+            "none",
+            "unknown",
+            null
+          ]
+        },
+        "bank_status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "no_business_bank_account",
+            "low_or_inconsistent_deposits",
+            "consistent_monthly_deposits",
+            "strong_clean_activity",
+            "recent_nsfs_overdrafts",
+            "unknown",
+            null
+          ]
+        }
+      }
+    },
+    "owner_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "credit_range": {
+          "type": "string",
+          "enum": [
+            "720_plus",
+            "680_719",
+            "640_679",
+            "600_639",
+            "550_599",
+            "below_550",
+            "unknown",
+            "not_provided"
+          ]
+        },
+        "ownership_percent": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "personal_guarantee_willingness": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "yes",
+            "no",
+            "unsure",
+            "not_applicable",
+            null
+          ]
+        },
+        "material_credit_events": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "none_disclosed",
+              "recent_delinquency",
+              "bankruptcy",
+              "default",
+              "tax_lien",
+              "judgment",
+              "other",
+              "unknown"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "owner_information_status": {
+          "type": "string",
+          "enum": [
+            "complete",
+            "partial",
+            "not_collected",
+            "not_applicable"
+          ]
+        }
+      }
+    },
+    "funding_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requested_amount",
+        "use_of_funds"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "urgency_level"
+          ]
+        },
+        {
+          "required": [
+            "funding_deadline"
+          ]
+        }
+      ],
+      "properties": {
+        "requested_amount": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "minimum_useful_amount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "use_of_funds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "working_capital",
+              "inventory",
+              "equipment",
+              "payroll",
+              "expansion",
+              "marketing",
+              "receivables_gap",
+              "tax_obligation",
+              "debt_refinance",
+              "acquisition",
+              "real_estate",
+              "emergency_repair",
+              "other"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "use_of_funds_details": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1500
+        },
+        "funding_deadline": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "urgency_level": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "immediate",
+            "within_7_days",
+            "within_30_days",
+            "within_60_days",
+            "flexible",
+            null
+          ]
+        },
+        "preferred_term": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "short",
+            "medium",
+            "long",
+            "flexible",
+            "unknown",
+            null
+          ]
+        },
+        "preferred_payment_frequency": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "daily",
+            "weekly",
+            "biweekly",
+            "monthly",
+            "flexible",
+            "unknown",
+            null
+          ]
+        },
+        "collateral_available": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "none",
+              "equipment",
+              "real_estate",
+              "accounts_receivable",
+              "inventory",
+              "other",
+              "unknown"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "bank_link_completed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "existing_lender_relationship": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        }
+      }
+    },
+    "document_readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "completion_percentage",
+        "available_documents",
+        "missing_documents"
+      ],
+      "properties": {
+        "completion_percentage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "readiness_label": {
+          "type": "string",
+          "enum": [
+            "complete",
+            "mostly_complete",
+            "incomplete",
+            "insufficient",
+            "unknown"
+          ]
+        },
+        "available_documents": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "application",
+              "government_id",
+              "voided_check",
+              "bank_statements",
+              "business_bank_link",
+              "business_tax_returns",
+              "personal_tax_returns",
+              "profit_and_loss",
+              "balance_sheet",
+              "debt_schedule",
+              "accounts_receivable_aging",
+              "accounts_payable_aging",
+              "invoices",
+              "equipment_quote",
+              "purchase_order",
+              "business_formation_documents",
+              "ownership_documents",
+              "lease",
+              "real_estate_documents",
+              "other"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "missing_documents": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "application",
+              "government_id",
+              "voided_check",
+              "bank_statements",
+              "business_bank_link",
+              "business_tax_returns",
+              "personal_tax_returns",
+              "profit_and_loss",
+              "balance_sheet",
+              "debt_schedule",
+              "accounts_receivable_aging",
+              "accounts_payable_aging",
+              "invoices",
+              "equipment_quote",
+              "purchase_order",
+              "business_formation_documents",
+              "ownership_documents",
+              "lease",
+              "real_estate_documents",
+              "other"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "document_storage_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Approved-system reference only; do not include credentials or public links to restricted files."
+        },
+        "documents_last_reviewed": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        }
+      }
+    },
+    "data_quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "intake_quality_score",
+        "intake_label",
+        "field_evidence",
+        "missing_critical_fields",
+        "conflicting_fields"
+      ],
+      "properties": {
+        "intake_quality_score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "intake_label": {
+          "type": "string",
+          "enum": [
+            "complete",
+            "mostly_complete",
+            "incomplete",
+            "insufficient_for_matching"
+          ]
+        },
+        "field_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/field_evidence"
+          }
+        },
+        "missing_critical_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "conflicting_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "estimated_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "analysis_confidence": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            null
+          ]
+        }
+      }
+    },
+    "consent_and_authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "analysis_authorization_status",
+        "consent_status"
+      ],
+      "properties": {
+        "analysis_authorization_status": {
+          "type": "string",
+          "enum": [
+            "confirmed",
+            "not_confirmed",
+            "unknown"
+          ]
+        },
+        "consent_status": {
+          "type": "string",
+          "enum": [
+            "confirmed",
+            "not_collected",
+            "declined",
+            "unknown"
+          ]
+        },
+        "submission_authorization_status": {
+          "type": "string",
+          "enum": [
+            "not_requested",
+            "confirmed",
+            "not_confirmed",
+            "declined",
+            "unknown"
+          ]
+        },
+        "authorization_last_verified": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "consent_record_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Approved-system reference; do not embed signatures or restricted personal data."
+        }
+      }
+    },
+    "risk_flags": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/risk_flag"
+      }
+    },
+    "notes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "borrower_summary": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2500
+        },
+        "internal_review_notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 5000
+        },
+        "privacy_notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1500
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1004 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/lender-fit-routing-copilot/outcome-tracking.schema.json",
+  "name": "lender_fit_routing_copilot_outcome_tracking_schema",
+  "title": "Lender Fit Routing Copilot Outcome Tracking Schema",
+  "version": "1.1",
+  "status": "production_reference",
+  "last_updated": "2026-07-16",
+  "purpose": "Validate match decisions and downstream outcomes while preserving versions, audit history, and human review.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata",
+    "match_reference",
+    "recommendation",
+    "human_review",
+    "submission",
+    "decision",
+    "offer",
+    "funding",
+    "decline",
+    "withdrawal",
+    "override",
+    "timing_metrics",
+    "model_versions",
+    "audit"
+  ],
+  "$defs": {
+    "money": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "timestamp": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "redacted_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{2,127}$"
+    },
+    "string_list": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "audit_event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "event_type",
+        "event_at",
+        "actor_type",
+        "summary"
+      ],
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 128
+        },
+        "event_type": {
+          "type": "string",
+          "enum": [
+            "created",
+            "updated",
+            "analysis_saved",
+            "review_assigned",
+            "review_decision",
+            "override_requested",
+            "override_approved",
+            "override_rejected",
+            "submission_created",
+            "submission_updated",
+            "decision_recorded",
+            "offer_recorded",
+            "funding_recorded",
+            "decline_recorded",
+            "withdrawal_recorded",
+            "criteria_reverified",
+            "status_changed",
+            "error",
+            "other"
+          ]
+        },
+        "event_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "actor_type": {
+          "type": "string",
+          "enum": [
+            "user",
+            "reviewer",
+            "system",
+            "action",
+            "provider",
+            "unknown"
+          ]
+        },
+        "actor_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "source_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "write_confirmation_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        }
+      }
+    }
+  },
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome_id",
+        "borrower_id",
+        "analysis_id",
+        "created_at",
+        "updated_at",
+        "currency",
+        "redaction_confirmed"
+      ],
+      "properties": {
+        "outcome_id": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 128
+        },
+        "borrower_id": {
+          "$ref": "#/$defs/redacted_id"
+        },
+        "analysis_id": {
+          "$ref": "#/$defs/redacted_id"
+        },
+        "workspace_id": {
+          "$ref": "#/$defs/redacted_id"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "default": "USD"
+        },
+        "record_status": {
+          "type": "string",
+          "enum": [
+            "active",
+            "closed",
+            "archived",
+            "void"
+          ]
+        },
+        "redaction_confirmed": {
+          "type": "boolean",
+          "const": true
+        },
+        "record_owner": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200
+        }
+      }
+    },
+    "match_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "product_matrix_version",
+        "criteria_status",
+        "analysis_status"
+      ],
+      "properties": {
+        "product_matrix_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "product_id": {
+          "$ref": "#/$defs/redacted_id"
+        },
+        "provider_id": {
+          "$ref": "#/$defs/redacted_id"
+        },
+        "criteria_last_verified": {
+          "$ref": "#/$defs/date"
+        },
+        "criteria_status": {
+          "type": "string",
+          "enum": [
+            "current",
+            "review_soon",
+            "stale",
+            "unverified",
+            "inactive"
+          ]
+        },
+        "analysis_status": {
+          "type": "string",
+          "enum": [
+            "ready_for_matching",
+            "preliminary_analysis_only",
+            "more_information_required",
+            "no_current_match"
+          ]
+        },
+        "hard_gate_result": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "pass",
+            "fail",
+            "review",
+            "missing_data",
+            null
+          ]
+        },
+        "intake_quality_score": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "intake_label": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "complete",
+            "mostly_complete",
+            "incomplete",
+            "insufficient_for_matching",
+            null
+          ]
+        },
+        "funding_readiness_score": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Optional upstream readiness score; never substitute for product-fit score."
+        },
+        "funding_readiness_tier": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "highly_fundable",
+            "fundable_review",
+            "selective_programs",
+            "not_ready_fixable",
+            null
+          ]
+        }
+      }
+    },
+    "recommendation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recommendation_status",
+        "ranked_product_ids",
+        "human_review_required"
+      ],
+      "properties": {
+        "recommendation_status": {
+          "type": "string",
+          "enum": [
+            "strong_apparent_fit",
+            "potential_fit",
+            "weak_or_conditional_fit",
+            "poor_current_fit",
+            "excluded",
+            "more_information_required",
+            "no_current_match"
+          ]
+        },
+        "recommended_product_id": {
+          "$ref": "#/$defs/redacted_id"
+        },
+        "ranked_product_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 128
+          },
+          "uniqueItems": true
+        },
+        "total_fit_score": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "confidence_level": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            null
+          ]
+        },
+        "confidence_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2500
+        },
+        "strengths": {
+          "$ref": "#/$defs/string_list"
+        },
+        "risks": {
+          "$ref": "#/$defs/string_list"
+        },
+        "missing_information": {
+          "$ref": "#/$defs/string_list"
+        },
+        "assumptions": {
+          "$ref": "#/$defs/string_list"
+        },
+        "human_review_required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "human_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "review_status",
+        "review_decision"
+      ],
+      "properties": {
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "not_started",
+            "assigned",
+            "in_review",
+            "completed",
+            "cancelled"
+          ]
+        },
+        "reviewer_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200
+        },
+        "review_assigned_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "review_completed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "review_decision": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "approve_route_for_further_review",
+            "reject_route",
+            "request_more_information",
+            "hold",
+            "select_alternative_product",
+            "no_current_match"
+          ]
+        },
+        "selected_product_id": {
+          "$ref": "#/$defs/redacted_id"
+        },
+        "selected_provider_id": {
+          "$ref": "#/$defs/redacted_id"
+        },
+        "decision_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 4000
+        },
+        "conditions": {
+          "$ref": "#/$defs/string_list"
+        },
+        "signoff_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        }
+      }
+    },
+    "submission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "submission_status"
+      ],
+      "properties": {
+        "submission_status": {
+          "type": "string",
+          "enum": [
+            "not_started",
+            "preparing",
+            "ready_to_submit",
+            "submitted",
+            "additional_information_requested",
+            "cancelled",
+            "not_applicable"
+          ]
+        },
+        "submission_id": {
+          "$ref": "#/$defs/redacted_id"
+        },
+        "submitted_product_id": {
+          "$ref": "#/$defs/redacted_id"
+        },
+        "submitted_provider_id": {
+          "$ref": "#/$defs/redacted_id"
+        },
+        "submission_created_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "submitted_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "submission_owner": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200
+        },
+        "borrower_authorization_confirmed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "authorization_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "document_package_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "additional_information_requested": {
+          "$ref": "#/$defs/string_list"
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome_status"
+      ],
+      "properties": {
+        "outcome_status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "approved",
+            "declined",
+            "withdrawn",
+            "no_offer",
+            "offer_presented",
+            "offer_accepted",
+            "offer_rejected",
+            "funded",
+            "cancelled",
+            "no_current_match",
+            "readiness_work_needed"
+          ]
+        },
+        "decision_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "decision_source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "provider",
+            "borrower",
+            "internal_reviewer",
+            "system",
+            "unknown",
+            null
+          ]
+        },
+        "decision_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "decision_notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 4000
+        }
+      }
+    },
+    "offer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "offer_status",
+        "verified_terms"
+      ],
+      "properties": {
+        "offer_status": {
+          "type": "string",
+          "enum": [
+            "none",
+            "pending",
+            "presented",
+            "accepted",
+            "rejected",
+            "expired",
+            "withdrawn"
+          ]
+        },
+        "offered_amount": {
+          "$ref": "#/$defs/money"
+        },
+        "accepted_amount": {
+          "$ref": "#/$defs/money"
+        },
+        "term_months": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "payment_frequency": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "daily",
+            "weekly",
+            "biweekly",
+            "monthly",
+            "variable",
+            "unknown",
+            null
+          ]
+        },
+        "estimated_total_cost": {
+          "$ref": "#/$defs/money"
+        },
+        "annual_percentage_rate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "factor_rate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "offer_presented_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "offer_expires_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "offer_source_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "verified_terms": {
+          "type": "boolean"
+        }
+      }
+    },
+    "funding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "funded"
+      ],
+      "properties": {
+        "funded": {
+          "type": "boolean"
+        },
+        "funded_amount": {
+          "$ref": "#/$defs/money"
+        },
+        "funded_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "net_proceeds": {
+          "$ref": "#/$defs/money"
+        },
+        "payoffs_at_funding": {
+          "$ref": "#/$defs/money"
+        },
+        "funding_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "renewal_eligible": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "renewal_review_date": {
+          "$ref": "#/$defs/date"
+        }
+      }
+    },
+    "decline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decline_reason_categories"
+      ],
+      "properties": {
+        "decline_reason_categories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "revenue_below_requirement",
+              "time_in_business",
+              "credit_profile",
+              "industry_restriction",
+              "state_restriction",
+              "excessive_existing_obligations",
+              "negative_bank_activity",
+              "insufficient_average_balance",
+              "incomplete_documentation",
+              "ownership_or_identity_issue",
+              "requested_amount",
+              "unsupported_use_of_funds",
+              "collateral_issue",
+              "fraud_or_verification_concern",
+              "lender_capacity_or_program_change",
+              "duplicate_submission",
+              "borrower_withdrew",
+              "other"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "decline_reason_detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 4000
+        },
+        "declined_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "decline_source_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "model_rule_gap_suspected": {
+          "type": "boolean"
+        }
+      }
+    },
+    "withdrawal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "withdrawal_status"
+      ],
+      "properties": {
+        "withdrawal_status": {
+          "type": "string",
+          "enum": [
+            "not_withdrawn",
+            "borrower_withdrew",
+            "provider_withdrew",
+            "internal_cancelled"
+          ]
+        },
+        "withdrawn_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "withdrawal_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2500
+        },
+        "follow_up_allowed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "override": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "override_used"
+      ],
+      "properties": {
+        "override_used": {
+          "type": "boolean"
+        },
+        "override_status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "not_requested",
+            "requested",
+            "approved",
+            "rejected",
+            "cancelled",
+            null
+          ]
+        },
+        "original_product_id": {
+          "$ref": "#/$defs/redacted_id"
+        },
+        "selected_product_id": {
+          "$ref": "#/$defs/redacted_id"
+        },
+        "requested_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200
+        },
+        "override_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 4000
+        },
+        "supporting_evidence": {
+          "$ref": "#/$defs/string_list"
+        },
+        "risk_acknowledgement": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 3000
+        },
+        "expected_advantage": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 3000
+        },
+        "override_at": {
+          "$ref": "#/$defs/timestamp"
+        }
+      }
+    },
+    "timing_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "intake_to_match_hours": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "match_to_review_hours": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "review_to_submission_hours": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "submission_to_decision_hours": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "decision_to_funding_hours": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "total_cycle_hours": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "deadline_met": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "model_versions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "borrower_schema_version",
+        "product_schema_version",
+        "hard_gate_rules_version",
+        "scoring_model_version",
+        "agent_version",
+        "workflow_version"
+      ],
+      "properties": {
+        "borrower_schema_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "product_schema_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hard_gate_rules_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scoring_model_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agent_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workflow_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ai_prompt_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "crm_map_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "events",
+        "integrity_status"
+      ],
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/audit_event"
+          }
+        },
+        "last_event_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "integrity_status": {
+          "type": "string",
+          "enum": [
+            "complete",
+            "partial",
+            "error",
+            "unknown"
+          ]
+        },
+        "audit_notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 4000
+        }
+      }
+    }
+  }
+}

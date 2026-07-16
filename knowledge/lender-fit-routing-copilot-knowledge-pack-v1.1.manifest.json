@@ -1,0 +1,177 @@
+{
+  "name": "Lender Fit Routing Copilot Knowledge Pack",
+  "version": "1.1",
+  "generated_at": "2026-07-16T00:00:00Z",
+  "matrix_version": "PM-2026-07-16-r1",
+  "knowledge_file_count": 20,
+  "matrix_record_count": 59,
+  "provider_count": 19,
+  "product_family_count": 8,
+  "source_verification_counts": {
+    "imported_from_portfolio_report": 56,
+    "verified": 3
+  },
+  "source_change_policy": "Read-only source review; no connected source or source file was modified.",
+  "files": [
+    {
+      "file_number": 1,
+      "filename": "00-knowledge-index.md",
+      "format": "md",
+      "version": "1.1",
+      "size_bytes": 18065,
+      "sha256": "e448f6d2c01a41121b656e19b56121e991f8ea79e9498863eadfed311cb9e79e"
+    },
+    {
+      "file_number": 2,
+      "filename": "01-operating-manual.md",
+      "format": "md",
+      "version": "1.1",
+      "size_bytes": 19597,
+      "sha256": "39f7b62a6db546ca1f822f7f547c77ad7f77e2bf043a4bf8098253b58fc50cbf"
+    },
+    {
+      "file_number": 3,
+      "filename": "02-privacy-redaction-data-handling.md",
+      "format": "md",
+      "version": "1.1",
+      "size_bytes": 13421,
+      "sha256": "6b52ac281cc93f83b958a4af8c6e522d1bd58b7a4f6bc4996d1325888f5b96e9"
+    },
+    {
+      "file_number": 4,
+      "filename": "03-borrower-intake-schema.json",
+      "format": "json",
+      "version": "1.1",
+      "size_bytes": 23138,
+      "sha256": "5b41477f523e38f97b2a8ffb11e9aafd042268b3ac0df678110f782755983fdb"
+    },
+    {
+      "file_number": 5,
+      "filename": "04-borrower-intake-guide.md",
+      "format": "md",
+      "version": "1.1",
+      "size_bytes": 22844,
+      "sha256": "2ca2825052df66330df012ccad07724c7bc664808db2b8857ba071018b0b6048"
+    },
+    {
+      "file_number": 6,
+      "filename": "05-current-funding-product-matrix.csv",
+      "format": "csv",
+      "version": "1.1",
+      "size_bytes": 56318,
+      "sha256": "f3278bcd4910575bf7b33a93e8f4480b379e85b98bdc70cb95662c516977ac54"
+    },
+    {
+      "file_number": 7,
+      "filename": "06-product-matrix-schema.json",
+      "format": "json",
+      "version": "1.1",
+      "size_bytes": 16641,
+      "sha256": "a0a6b2d8c0729a57769a6098981ba4285f358c4144c2e46292788eb73c5bda4a"
+    },
+    {
+      "file_number": 8,
+      "filename": "07-product-criteria-maintenance-sop.md",
+      "format": "md",
+      "version": "1.1",
+      "size_bytes": 13975,
+      "sha256": "3cf00d206254bf8d770624eae148e82a2ef39f524cd81bb7cad2a147b131f980"
+    },
+    {
+      "file_number": 9,
+      "filename": "08-hard-gate-rules.json",
+      "format": "json",
+      "version": "1.1",
+      "size_bytes": 29468,
+      "sha256": "dae69be652f62e6d337f2a4259d2f28c56f358b796296c43b79ea023c5d2d59e"
+    },
+    {
+      "file_number": 10,
+      "filename": "09-weighted-scoring-model.md",
+      "format": "md",
+      "version": "1.1",
+      "size_bytes": 16120,
+      "sha256": "6d77dd0b91773b9b8c2b1925a6766c2609264d59336d070e472526e2a490478f"
+    },
+    {
+      "file_number": 11,
+      "filename": "10-confidence-staleness-exception-rules.md",
+      "format": "md",
+      "version": "1.1",
+      "size_bytes": 12049,
+      "sha256": "f9bd19efef91a324521ee68ab9c67509ffcc8bedeb255fade230f965a0657875"
+    },
+    {
+      "file_number": 12,
+      "filename": "11-funding-product-types-fit-guide.md",
+      "format": "md",
+      "version": "1.1",
+      "size_bytes": 29139,
+      "sha256": "0af951fada150eadce0e88aa40585a31fbbd3de8fafa7cb3745f609d1a3ee9d6"
+    },
+    {
+      "file_number": 13,
+      "filename": "12-human-review-brief-template.md",
+      "format": "md",
+      "version": "1.1",
+      "size_bytes": 9411,
+      "sha256": "ceaaccff4ba1516b7ab20a31fdea40d665a1185541a95bf76016aefb733eaa9e"
+    },
+    {
+      "file_number": 14,
+      "filename": "13-follow-up-question-library.md",
+      "format": "md",
+      "version": "1.1",
+      "size_bytes": 13307,
+      "sha256": "4ced771948a1f86eb7ac4b98133e2d9e977dae17a385d8718f3c19e8f613c46d"
+    },
+    {
+      "file_number": 15,
+      "filename": "14-submission-checklist-template.md",
+      "format": "md",
+      "version": "1.1",
+      "size_bytes": 13294,
+      "sha256": "e198ef92e4ff05f395696aa3172e928abb596a30e66ec33db200f039715ca1ae"
+    },
+    {
+      "file_number": 16,
+      "filename": "15-exception-review-sop.md",
+      "format": "md",
+      "version": "1.1",
+      "size_bytes": 10536,
+      "sha256": "4141d4fe163723c1c7697a8b8fce5867475f5552e2f9272e66ea2c8ca2840b5f"
+    },
+    {
+      "file_number": 17,
+      "filename": "16-outcome-tracking-schema.json",
+      "format": "json",
+      "version": "1.1",
+      "size_bytes": 22660,
+      "sha256": "69960dfd60da5aa427e6ed8b29ec0698e5f5aecb400aae0e5953f0a7aaab7030"
+    },
+    {
+      "file_number": 18,
+      "filename": "17-crm-field-map.csv",
+      "format": "csv",
+      "version": "1.1",
+      "size_bytes": 24226,
+      "sha256": "fc28194aa1a7351ff54515ac0be89d079ffcee6edc8de4cde5baf3e9ded174e5"
+    },
+    {
+      "file_number": 19,
+      "filename": "18-n8n-workflow-and-action-map.md",
+      "format": "md",
+      "version": "1.1",
+      "size_bytes": 15783,
+      "sha256": "b74969d4dd7fd169d2e0727f42814bf92d832e5848b63f7d99534f5647fa1d53"
+    },
+    {
+      "file_number": 20,
+      "filename": "19-test-cases-and-expected-outputs.md",
+      "format": "md",
+      "version": "1.1",
+      "size_bytes": 26584,
+      "sha256": "3d3d06de2de7d4432952a478d24b81794600c233435a400594c9b35043a0101d"
+    }
+  ]
+}
