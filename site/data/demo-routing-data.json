@@ -1,0 +1,181 @@
+{
+  "borrower": {
+    "business": "Ridgeway Electric LLC",
+    "industry": "Electrical contractor",
+    "state": "Georgia",
+    "timeInBusiness": "42 months",
+    "averageMonthlyRevenue": "$78,000",
+    "requestedAmount": "$125,000",
+    "useOfFunds": "Equipment + working capital",
+    "creditRange": "660–679",
+    "existingPositions": 1,
+    "documentReadiness": 82
+  },
+  "steps": [
+    {
+      "id": "privacy",
+      "label": "Privacy Check",
+      "status": "pass",
+      "detail": "Redacted profile accepted"
+    },
+    {
+      "id": "intake",
+      "label": "Intake Quality",
+      "status": "pass",
+      "detail": "82% document readiness"
+    },
+    {
+      "id": "gates",
+      "label": "Hard Gates",
+      "status": "review",
+      "detail": "7 pass · 1 review"
+    },
+    {
+      "id": "score",
+      "label": "Product Scoring",
+      "status": "pass",
+      "detail": "Top score: 88"
+    },
+    {
+      "id": "confidence",
+      "label": "Confidence",
+      "status": "pass",
+      "detail": "High"
+    },
+    {
+      "id": "ranking",
+      "label": "Apparent Ranking",
+      "status": "pass",
+      "detail": "3 routes retained"
+    },
+    {
+      "id": "human",
+      "label": "Human Review",
+      "status": "review",
+      "detail": "Required before action"
+    }
+  ],
+  "gates": [
+    {
+      "label": "State eligibility",
+      "status": "pass",
+      "detail": "Georgia supported"
+    },
+    {
+      "label": "Industry eligibility",
+      "status": "pass",
+      "detail": "Contractor profile permitted"
+    },
+    {
+      "label": "Minimum revenue",
+      "status": "pass",
+      "detail": "$78K exceeds requirement"
+    },
+    {
+      "label": "Time in business",
+      "status": "pass",
+      "detail": "42 months exceeds requirement"
+    },
+    {
+      "label": "Requested amount",
+      "status": "pass",
+      "detail": "$125K within range"
+    },
+    {
+      "label": "Existing positions",
+      "status": "review",
+      "detail": "One active position needs payoff review"
+    },
+    {
+      "label": "Supported use of funds",
+      "status": "pass",
+      "detail": "Equipment and working capital supported"
+    },
+    {
+      "label": "Required documentation",
+      "status": "pass",
+      "detail": "Core package substantially complete"
+    }
+  ],
+  "matches": [
+    {
+      "id": "equipment",
+      "family": "Equipment Financing",
+      "label": "Strong Apparent Fit",
+      "labelKey": "strong",
+      "score": 88,
+      "confidence": "High",
+      "freshness": "Current",
+      "why": [
+        "Equipment purchase is a direct product-purpose match",
+        "Revenue and operating history clear the known gates",
+        "Requested amount is inside the reviewed range"
+      ],
+      "risks": [
+        "Final equipment quote still needs confirmation",
+        "Existing position may affect available structure"
+      ],
+      "missing": [
+        "Vendor quote dated within 30 days"
+      ],
+      "review": "Human review required before provider selection"
+    },
+    {
+      "id": "term",
+      "family": "Term Loan",
+      "label": "Potential Fit",
+      "labelKey": "potential",
+      "score": 76,
+      "confidence": "Medium",
+      "freshness": "Review Soon",
+      "why": [
+        "Operating history and revenue are directionally aligned",
+        "Lump-sum need can support a structured term"
+      ],
+      "risks": [
+        "Working-capital portion may shorten the useful-life match",
+        "Criteria should be reconfirmed before route selection"
+      ],
+      "missing": [
+        "Current debt schedule",
+        "Monthly free-cash-flow support"
+      ],
+      "review": "Criteria and payment pressure need review"
+    },
+    {
+      "id": "loc",
+      "family": "Business Line of Credit",
+      "label": "Weak or Conditional Fit",
+      "labelKey": "conditional",
+      "score": 61,
+      "confidence": "Medium",
+      "freshness": "Current",
+      "why": [
+        "Working-capital need may benefit from revolving access",
+        "Revenue is sufficient for initial review"
+      ],
+      "risks": [
+        "Equipment purchase is not the cleanest revolving-credit use",
+        "Existing position could constrain structure"
+      ],
+      "missing": [
+        "Recurring draw plan",
+        "Expected repayment cycle"
+      ],
+      "review": "Keep as a secondary route only"
+    }
+  ],
+  "outputs": [
+    "Borrower snapshot",
+    "Intake-quality assessment",
+    "Hard-gate report",
+    "Excluded-product reasons",
+    "Ranked apparent matches",
+    "Follow-up questions",
+    "Exception-review path",
+    "Human-review brief",
+    "Submission checklist",
+    "No Current Match explanation"
+  ],
+  "disclosure": "This analysis is an internal routing aid based on the information and product criteria provided. It is not an approval, offer, guarantee, or underwriting decision. Eligibility, terms, costs, and availability may change and require current lender review."
+}

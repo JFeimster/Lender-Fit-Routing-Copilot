@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lender Fit Routing Copilot — Interactive Embed</title>
+  <meta name="description" content="Interactive synthetic routing demo for Lender Fit Routing Copilot.">
+  <meta name="theme-color" content="#080a0f">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="embed-shell">
+    <header class="embed-header">
+      <a class="embed-brand" href="../" target="_blank" rel="noopener" aria-label="Open the full Lender Fit Routing Copilot site">
+        <img src="../assets/icons/route-mark.svg" width="38" height="38" alt="">
+        <span><strong>Lender Fit Routing Copilot</strong><small>Interactive synthetic route</small></span>
+      </a>
+      <a class="open-full" href="../" target="_blank" rel="noopener">Open Full Experience ↗</a>
+    </header>
+
+    <section class="embed-intro">
+      <div>
+        <span class="embed-eyebrow">HARD GATES → SCORE → CONFIDENCE → HUMAN REVIEW</span>
+        <h1>Stop guessing which funding product fits.</h1>
+        <p>A redacted borrower profile becomes a transparent route—not an approval promise.</p>
+      </div>
+      <button type="button" class="run-button" data-run>Run Demo <span aria-hidden="true">▶</span></button>
+    </section>
+
+    <section class="compact-console" aria-label="Synthetic routing console">
+      <div class="borrower-mini">
+        <span>FICTIONAL BORROWER</span>
+        <strong>Ridgeway Electric LLC</strong>
+        <div><b>GA</b><b>42 MO</b><b>$78K/MO</b><b>$125K ASK</b></div>
+      </div>
+      <div class="step-track" data-steps></div>
+      <div class="score-mini">
+        <span>TOP PRODUCT-FIT</span>
+        <strong data-score>0</strong>
+        <b>HIGH CONFIDENCE</b>
+      </div>
+    </section>
+
+    <section class="embed-matches" data-matches aria-label="Apparent match cards"></section>
+
+    <details class="how-built">
+      <summary>How the result was built</summary>
+      <div class="how-grid">
+        <span>✓ Redacted profile</span>
+        <span>✓ Intake completeness</span>
+        <span>✓ Product hard gates</span>
+        <span>✓ Weighted product fit</span>
+        <span>✓ Separate confidence</span>
+        <span>✓ Criteria freshness</span>
+        <span>✓ Human checkpoint</span>
+        <span>✓ No forced match</span>
+      </div>
+    </details>
+
+    <aside class="embed-disclosure">
+      <span aria-hidden="true">⚠</span>
+      <p>This analysis is an internal routing aid based on the information and product criteria provided. It is not an approval, offer, guarantee, or underwriting decision. Eligibility, terms, costs, and availability may change and require current lender review.</p>
+    </aside>
+
+    <footer class="embed-footer">
+      <a class="embed-cta" href="https://chatgpt.com/g/g-6a5858307bb0819193adfe5cd8adccf8-lender-fit-routing-copilot" target="_blank" rel="noopener">Open Lender Fit Routing Copilot <span aria-hidden="true">↗</span></a>
+      <span>Use redacted structured data. Human review required.</span>
+    </footer>
+  </main>
+  <script src="./script.js" defer></script>
+</body>
+</html>

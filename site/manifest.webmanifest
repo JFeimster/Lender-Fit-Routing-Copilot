@@ -1,0 +1,17 @@
+{
+  "name": "Lender Fit Routing Copilot",
+  "short_name": "Lender Fit",
+  "description": "Transparent funding-product routing with hard gates, scoring, confidence, and human review.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#080a0f",
+  "theme_color": "#080a0f",
+  "icons": [
+    {
+      "src": "./assets/icons/route-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

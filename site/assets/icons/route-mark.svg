@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+<title id="title">Lender Fit Routing Copilot route mark</title>
+<rect width="128" height="128" rx="28" fill="#090b10"/>
+<path d="M25 35h33c13 0 21 8 21 20v4c0 12 8 20 21 20h5" fill="none" stroke="#8cff35" stroke-width="10" stroke-linecap="round"/>
+<path d="M25 93h27c13 0 21-8 21-20v-4c0-12 8-20 21-20h11" fill="none" stroke="#3977ff" stroke-width="10" stroke-linecap="round"/>
+<circle cx="25" cy="35" r="10" fill="#ff3dbd"/>
+<circle cx="25" cy="93" r="10" fill="#ffb020"/>
+<path d="M99 69l16 10-16 10z" fill="#f8fafc"/>
+</svg>

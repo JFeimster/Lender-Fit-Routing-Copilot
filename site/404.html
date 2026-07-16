@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Route Not Found | Lender Fit Routing Copilot</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <style>
+    main { min-height: 100vh; display:grid; place-items:center; padding:1rem; }
+    .error-card { max-width:760px; padding:clamp(2rem,7vw,5rem); background:#10151f; border:1px solid #2a3446; border-radius:26px; box-shadow:14px 14px 0 #030508; }
+    .error-code { color:#ff3dbd; font:900 1rem var(--mono); }
+    .error-card h1 { margin-top:1rem; font-size:clamp(3rem,9vw,7rem); }
+    .error-card p { margin:1rem 0 2rem; }
+  </style>
+</head>
+<body>
+  <div class="ambient-grid" aria-hidden="true"></div>
+  <main>
+    <section class="error-card">
+      <span class="error-code">404 / NO CURRENT ROUTE</span>
+      <h1>This path failed the gate.</h1>
+      <p>The page does not exist, but the Copilot is ready to route a redacted borrower profile.</p>
+      <a class="button button--primary button--large" href="./">Return to the launch site</a>
+      <a class="button button--ghost button--large" href="https://chatgpt.com/g/g-6a5858307bb0819193adfe5cd8adccf8-lender-fit-routing-copilot" target="_blank" rel="noopener">Launch the GPT ↗</a>
+    </section>
+  </main>
+</body>
+</html>
